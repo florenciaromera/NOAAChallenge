@@ -35,7 +35,7 @@ public class MuestraController {
         }
         MuestraResponse mResp = new MuestraResponse();
         mResp.id = muestra.getMuestraId();
-        mResp.color = "Verde";
+        mResp.color = bService.getColor(mR.alturaNivelMar);
         return ResponseEntity.ok(mResp);
     }
 

@@ -29,4 +29,16 @@ public class BoyaService {
         return null;
 
     }
+
+    public String getColor(double alturaNivelMar) {
+        String color = "VERDE";
+        if (Math.abs(alturaNivelMar) <= -100 || Math.abs(alturaNivelMar) >= 100) {
+            color = "ROJO";
+        } else if ((Math.abs(alturaNivelMar) <= -50 && Math.abs(alturaNivelMar) > -100)
+                || (Math.abs(alturaNivelMar) >= 50 && Math.abs(alturaNivelMar) < 100)) {
+            color = "AMARILLO";
+        }
+        return color;
+    }
+
 }
