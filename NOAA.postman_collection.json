@@ -1,0 +1,124 @@
+{
+	"variables": [],
+	"info": {
+		"name": "NOAA",
+		"_postman_id": "360f606e-34eb-a334-59a6-31a15d92cb72",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ObtenerBoyas",
+			"request": {
+				"url": "http://localhost:8080/boyas",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ObtenerBoyasPorId",
+			"request": {
+				"url": "http://localhost:8080/boyas/1",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ObtenerMuestrasPorBoya",
+			"request": {
+				"url": "http://localhost:8080/muestras/boyas/1",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "CrearBoya",
+			"request": {
+				"url": "http://localhost:8080/boyas",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"longitudInstalacion\": 34.8877,\n\t\"latitudInstalacion\": 78.230\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "RegistrarMuestra",
+			"request": {
+				"url": "http://localhost:8080/muestras",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"boyaId\": 1,\n\t\"horario\": \"2020-08-08T22:25:30\",\n\t\"matricula\": \"99D9AAK\",\n\t\"latitud\": -17.44681203,\n\t\"longitud\": -113.16478854,\n\t\"alturaNivelDelMar\": 50\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ActualizarColor",
+			"request": {
+				"url": "http://localhost:8080/boyas/1",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"color\": \"ROJO\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "BorrarColor",
+			"request": {
+				"url": "http://localhost:8080/muestras/1",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
