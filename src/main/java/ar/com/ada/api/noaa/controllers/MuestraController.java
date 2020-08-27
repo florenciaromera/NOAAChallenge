@@ -1,5 +1,6 @@
 package ar.com.ada.api.noaa.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.com.ada.api.noaa.entities.Muestra;
 import ar.com.ada.api.noaa.models.requests.MuestraRequest;
 import ar.com.ada.api.noaa.models.responses.GenericResponse;
+import ar.com.ada.api.noaa.models.responses.MuestraColorResponse;
 import ar.com.ada.api.noaa.models.responses.MuestraResponse;
 import ar.com.ada.api.noaa.services.BoyaService;
 import ar.com.ada.api.noaa.services.MuestraService;
@@ -47,8 +48,15 @@ public class MuestraController {
     }
 
     @GetMapping("/muestras/colores/{color}")
-    public ResponseEntity<List<Muestra>> listaMuestrasPorColor(@PathVariable String color) {
-        List<Muestra> listaMuestrasPorColor = mService.obtenerPorColor(color);
+    public ResponseEntity<List<MuestraColorResponse>> listaMuestrasPorColor(@PathVariable String color) {
+        List<MuestraColorResponse> listaMuestrasPorColor = new ArrayList<>();
+        for (Muestra m : mService.obtenerPorColor(color)) {
+            MuestraColorResponse mCR = new MuestraColorResponse();
+            mCR.boyaId = m.getBoya().getBoyaId();
+            mCR.horario = m.getHorarioMuestra();
+            mCR.alturaNivelDelMar = m.getAlturaNivelMar();
+            listaMuestrasPorColor.add(mCR);
+        }
         return ResponseEntity.ok(listaMuestrasPorColor);
     }
 
