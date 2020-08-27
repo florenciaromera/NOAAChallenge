@@ -45,9 +45,14 @@ public class MuestraService {
         repo.save(muestra);
     }
 
-    // public List<Muestra> obtenerPorColor(String color) {
-
-    // return null;
-    // }
-
+    public List<Muestra> obtenerPorColor(String color) {
+        List<Muestra> muestras;
+        if (color.equalsIgnoreCase("ROJO")) {
+            muestras = repo.findAllRed();
+        } else if (color.equalsIgnoreCase("AMARILLO")) {
+            muestras = repo.findAllYellow();
+        } else
+            muestras = repo.findAllGreen();
+        return muestras;
+    }
 }

@@ -17,6 +17,7 @@ public class Boya {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer boyaId;
     @Column(name = "color_luz")
+    @JsonIgnore
     private String colorLuz;
     @Column(name = "longitud_instalacion")
     private Double longitudInstalacion;

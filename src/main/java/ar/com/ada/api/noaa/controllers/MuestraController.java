@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.com.ada.api.noaa.entities.Muestra;
@@ -45,12 +46,11 @@ public class MuestraController {
         return ResponseEntity.ok(listaMuestrasPorBoya);
     }
 
-    // @GetMapping("/muestras/colores/{color}")
-    // public ResponseEntity<List<Muestra>> listaMuestrasPorColor(@RequestParam
-    // String color) {
-    // List<Muestra> listaMuestrasPorColor = mService.obtenerPorColor(color);
-    // return ResponseEntity.ok(listaMuestrasPorColor);
-    // }
+    @GetMapping("/muestras/colores/{color}")
+    public ResponseEntity<List<Muestra>> listaMuestrasPorColor(@PathVariable String color) {
+        List<Muestra> listaMuestrasPorColor = mService.obtenerPorColor(color);
+        return ResponseEntity.ok(listaMuestrasPorColor);
+    }
 
     @DeleteMapping("/muestras/{id}")
     public ResponseEntity<GenericResponse> borrarColor(@PathVariable Integer id) {
