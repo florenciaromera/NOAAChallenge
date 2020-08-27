@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import ar.com.ada.api.noaa.entities.Boya;
 import ar.com.ada.api.noaa.entities.Muestra;
+import ar.com.ada.api.noaa.models.responses.MuestraAlturaMinResponse;
 import ar.com.ada.api.noaa.repos.MuestraRepo;
 
 @Service
@@ -57,5 +58,9 @@ public class MuestraService {
         } else
             muestras = repo.findAllGreen();
         return muestras;
+    }
+
+    public Muestra getAlturaMin(Integer boyaId) {
+        return repo.findByAlturaMin(boyaId);
     }
 }

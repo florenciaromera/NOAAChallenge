@@ -21,4 +21,11 @@ public interface MuestraRepo extends JpaRepository<Muestra, Integer> {
 
     @Query("select m from Muestra m where m.alturaNivelMar between -50 and 50")
     List<Muestra> findAllGreen();
+
+    @Query("select m from Muestra m where m.boya.boyaId=:boyaId and m.alturaNivelMar=(select min(m.alturaNivelMar) from m where m.boya.boyaId=:boyaId)")
+    Muestra findByAlturaMin(Integer boyaId);
+
+    // @Query("select min(m.alturaNivelMar) from Muestra m where
+    // m.boya.boyaId=:boyaId")
+    // Muestra findByAlturaMin(Integer boyaId);
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ar.com.ada.api.noaa.entities.Muestra;
 import ar.com.ada.api.noaa.models.requests.MuestraRequest;
 import ar.com.ada.api.noaa.models.responses.GenericResponse;
+import ar.com.ada.api.noaa.models.responses.MuestraAlturaMinResponse;
 import ar.com.ada.api.noaa.models.responses.MuestraColorResponse;
 import ar.com.ada.api.noaa.models.responses.MuestraResponse;
 import ar.com.ada.api.noaa.services.BoyaService;
@@ -58,6 +59,16 @@ public class MuestraController {
             listaMuestrasPorColor.add(mCR);
         }
         return ResponseEntity.ok(listaMuestrasPorColor);
+    }
+
+    @GetMapping("/muestras/minima/{boyaId}")
+    public ResponseEntity<MuestraAlturaMinResponse> alturaMarMinima(@PathVariable Integer boyaId) {
+        MuestraAlturaMinResponse mAMR = new MuestraAlturaMinResponse();
+        Muestra m = mService.getAlturaMin(boyaId);
+        mAMR.color = m.getBoya().getColorLuz();
+        mAMR.alturaNivelMar = m.getAlturaNivelMar();
+        mAMR.horario = m.getHorarioMuestra();
+        return ResponseEntity.ok(mAMR);
     }
 
     @DeleteMapping("/muestras/{id}")
