@@ -5,6 +5,7 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ar.com.ada.api.noaa.entities.Boya;
 import ar.com.ada.api.noaa.entities.Muestra;
 import ar.com.ada.api.noaa.repos.MuestraRepo;
 
@@ -19,7 +20,9 @@ public class MuestraService {
     public Muestra crearMuestra(Integer boyaId, Double alturaNivelMar, Date horario, Double latitud, Double longitud,
             String matricula) {
         Muestra muestra = new Muestra();
-        muestra.setBoya(bService.obtenerPorId(boyaId));
+        Boya b = bService.obtenerPorId(boyaId);
+        b.setColorLuz(bService.getColor(alturaNivelMar));
+        muestra.setBoya(b);
         muestra.setAlturaNivelMar(alturaNivelMar);
         muestra.setHorarioMuestra(horario);
         muestra.setLatitud(latitud);
@@ -46,7 +49,7 @@ public class MuestraService {
     }
 
     public List<Muestra> obtenerPorColor(String color) {
-        List<Muestra> muestras;
+        List<Muestra> muestras = new ArrayList<>();
         if (color.equalsIgnoreCase("ROJO")) {
             muestras = repo.findAllRed();
         } else if (color.equalsIgnoreCase("AMARILLO")) {
