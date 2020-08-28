@@ -25,7 +25,10 @@ public interface MuestraRepo extends JpaRepository<Muestra, Integer> {
     @Query("select m from Muestra m where m.boya.boyaId=:boyaId and m.alturaNivelMar=(select min(m.alturaNivelMar) from m where m.boya.boyaId=:boyaId)")
     Muestra findByAlturaMin(Integer boyaId);
 
-    // @Query("select min(m.alturaNivelMar) from Muestra m where
-    // m.boya.boyaId=:boyaId")
-    // Muestra findByAlturaMin(Integer boyaId);
+    @Query("select m from Muestra m where m.boya.boyaId=:boyaId and m.horarioMuestra between (select min(m.horarioMuestra) from m where m.alturaNivelMar >= 200 "
+            + "or m.alturaNivelMar <= -200) and (select max(m.horarioMuestra) from m where m.alturaNivelMar >= 200 or m.alturaNivelMar <= -200)")
+    List<Muestra> findMuestrasAbsolutasByBoyaId(Integer boyaId);
+
+    @Query("select m from Muestra m where m.boya.boyaId=:boyaId order by m.muestraId desc")
+    List<Muestra> ultimaMuestra(Integer boyaId);
 }

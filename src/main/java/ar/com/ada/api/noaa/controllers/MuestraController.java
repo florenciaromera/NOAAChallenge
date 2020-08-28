@@ -2,6 +2,7 @@ package ar.com.ada.api.noaa.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import ar.com.ada.api.noaa.anomalias.Anomalia;
 import ar.com.ada.api.noaa.entities.Muestra;
 import ar.com.ada.api.noaa.models.requests.MuestraRequest;
 import ar.com.ada.api.noaa.models.responses.GenericResponse;
 import ar.com.ada.api.noaa.models.responses.MuestraAlturaMinResponse;
+import ar.com.ada.api.noaa.models.responses.MuestraAnomaliaResponse;
 import ar.com.ada.api.noaa.models.responses.MuestraColorResponse;
 import ar.com.ada.api.noaa.models.responses.MuestraResponse;
 import ar.com.ada.api.noaa.services.BoyaService;
@@ -69,6 +72,20 @@ public class MuestraController {
         mAMR.alturaNivelMar = m.getAlturaNivelMar();
         mAMR.horario = m.getHorarioMuestra();
         return ResponseEntity.ok(mAMR);
+    }
+
+    @GetMapping("/muestras/anomalias/{boyaId}")
+    public ResponseEntity<MuestraAnomaliaResponse> anomalias(@PathVariable Integer boyaId) {
+        MuestraAnomaliaResponse mAR = new MuestraAnomaliaResponse();
+        Optional<Anomalia> anomalia = mService.getAnomalia(boyaId);
+        if (anomalia.isPresent()) {
+            mAR.alturaNivelMarActual = anomalia.get().getAlturaMarActual();
+            mAR.horarioInicioAnomalia = anomalia.get().getHorarioInicio();
+            mAR.horarioFinAnomalia = anomalia.get().getHorarioFin();
+            mAR.tipoAlerta = anomalia.get().getTipoAlerta();
+            return ResponseEntity.ok(mAR);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/muestras/{id}")
