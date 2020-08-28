@@ -67,13 +67,23 @@ public class MuestraService {
     }
 
     public Optional<Anomalia> getAnomalia(Integer boyaId) {
-        // devolver alturaActual, horarioInicio, horarioFin, tipoAlerta
         Anomalia anomalia = new Anomalia();
         List<Muestra> muestras = repo.findMuestrasAbsolutasByBoyaId(boyaId);
         Muestra mInicial = muestras.get(0);
         Muestra mfinal = repo.ultimaMuestra(boyaId).get(0);
         Boolean setearMuestraInicial = false;
+        Muestra mAnterior = null;
         for (Muestra m : muestras) {
+            if (mAnterior == null) {
+                mAnterior = m;
+            } else if ((Math.abs(mAnterior.getAlturaNivelMar()) + Math.abs(m.getAlturaNivelMar())) >= 500) {
+                anomalia = createAnomalia(mfinal.getAlturaNivelMar(), mAnterior.getHorarioMuestra(),
+                        m.getHorarioMuestra(), "ALERTA DE IMPACTO");
+                break;
+            } else {
+                mAnterior = m;
+            }
+
             if (setearMuestraInicial) {
                 if (Math.abs(m.getAlturaNivelMar()) >= 200) {
                     mInicial = m;
@@ -86,15 +96,22 @@ public class MuestraService {
                 long difHoraria = m.getHorarioMuestra().getTime() - mInicial.getHorarioMuestra().getTime();
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(difHoraria);
                 if (minutes >= 10) {
-                    anomalia.setAlturaMarActual(mfinal.getAlturaNivelMar());
-                    anomalia.setHorarioInicio(mInicial.getHorarioMuestra());
-                    anomalia.setHorarioFin(m.getHorarioMuestra());
-                    anomalia.setTipoAlerta("KAIJUN");
+                    anomalia = createAnomalia(mfinal.getAlturaNivelMar(), mInicial.getHorarioMuestra(),
+                            m.getHorarioMuestra(), "KAIJUN");
                     break;
                 }
                 setearMuestraInicial = true;
             }
         }
         return Optional.of(anomalia);
+    }
+
+    private Anomalia createAnomalia(Double alturaNivelMar, Date horarioInicio, Date horarioFin, String tipoAlerta) {
+        Anomalia anomalia = new Anomalia();
+        anomalia.setAlturaMarActual(alturaNivelMar);
+        anomalia.setHorarioInicio(horarioInicio);
+        anomalia.setHorarioFin(horarioFin);
+        anomalia.setTipoAlerta(tipoAlerta);
+        return anomalia;
     }
 }
