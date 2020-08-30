@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import ar.com.ada.api.noaa.anomalias.Anomalia;
 import ar.com.ada.api.noaa.entities.Boya;
 import ar.com.ada.api.noaa.entities.Muestra;
-import ar.com.ada.api.noaa.models.responses.MuestraAlturaMinResponse;
 import ar.com.ada.api.noaa.repos.MuestraRepo;
 
 @Service
@@ -52,7 +51,7 @@ public class MuestraService {
     }
 
     public List<Muestra> obtenerPorColor(String color) {
-        List<Muestra> muestras = new ArrayList<>();
+        List<Muestra> muestras;
         if (color.equalsIgnoreCase("ROJO")) {
             muestras = repo.findAllRed();
         } else if (color.equalsIgnoreCase("AMARILLO")) {
@@ -64,6 +63,16 @@ public class MuestraService {
 
     public Muestra getAlturaMin(Integer boyaId) {
         return repo.findByAlturaMin(boyaId);
+    }
+
+    public boolean borrarMuestra(Integer id){
+        Muestra m = obtenerPorId(id);
+        if(m == null){
+            return false;
+        }
+        m.getBoya().setColorLuz("AZUL");
+        grabar(m);
+        return true;
     }
 
     public Optional<Anomalia> getAnomalia(Integer boyaId) {

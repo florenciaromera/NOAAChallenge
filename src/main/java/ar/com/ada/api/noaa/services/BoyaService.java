@@ -8,14 +8,21 @@ import org.springframework.stereotype.Service;
 
 import ar.com.ada.api.noaa.entities.Boya;
 import ar.com.ada.api.noaa.repos.BoyaRepo;
+import ar.com.ada.api.noaa.utils.GeoUtils;
 
 @Service
 public class BoyaService {
     @Autowired
     BoyaRepo boyaRepo;
 
-    public void crearBoya(Boya boya) {
-        boyaRepo.save(boya);
+    public Boya crearBoya(Double latitud, Double longitud) {
+        if (GeoUtils.chequearRangoPlanetario(latitud, longitud)) {
+            Boya boya = new Boya();
+            boya.setLatitudInstalacion(latitud);
+            boya.setLongitudInstalacion(longitud);
+            return boyaRepo.save(boya);
+        }
+        return null;
     }
 
     public List<Boya> obtenerBoyas() {
@@ -40,5 +47,14 @@ public class BoyaService {
         }
         return color;
     }
+
+	public Boya actualizarColor(Integer id, String color) {
+        Boya boya = obtenerPorId(id);
+        if(boya == null){
+            return null;
+        }
+        boya.setColorLuz(color);
+        return boyaRepo.save(boya);
+	}
 
 }

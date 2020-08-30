@@ -1,28 +1,16 @@
 package ar.com.ada.api.noaa.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ar.com.ada.api.noaa.anomalias.Anomalia;
 import ar.com.ada.api.noaa.entities.Muestra;
 import ar.com.ada.api.noaa.models.requests.MuestraRequest;
-import ar.com.ada.api.noaa.models.responses.GenericResponse;
-import ar.com.ada.api.noaa.models.responses.MuestraAlturaMinResponse;
-import ar.com.ada.api.noaa.models.responses.MuestraAnomaliaResponse;
-import ar.com.ada.api.noaa.models.responses.MuestraColorResponse;
-import ar.com.ada.api.noaa.models.responses.MuestraResponse;
-import ar.com.ada.api.noaa.services.BoyaService;
-import ar.com.ada.api.noaa.services.MuestraService;
+import ar.com.ada.api.noaa.models.responses.*;
+import ar.com.ada.api.noaa.services.*;
 
 @RestController
 public class MuestraController {
@@ -39,50 +27,48 @@ public class MuestraController {
         if (muestra == null) {
             return ResponseEntity.badRequest().build();
         }
-        MuestraResponse mResp = new MuestraResponse();
-        mResp.id = muestra.getMuestraId();
-        mResp.color = bService.getColor(mR.alturaNivelMar);
-        return ResponseEntity.ok(mResp);
+        return ResponseEntity
+                .ok(ResponseMethodsMapper.crearMR(muestra.getMuestraId(), bService.getColor(mR.alturaNivelMar)));
     }
 
     @GetMapping("/muestras/boyas/{boyaId}")
     public ResponseEntity<List<Muestra>> listaMuestrasPorBoya(@PathVariable Integer boyaId) {
         List<Muestra> listaMuestrasPorBoya = bService.obtenerPorId(boyaId).getMuestras();
+        if (listaMuestrasPorBoya.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(listaMuestrasPorBoya);
     }
 
     @GetMapping("/muestras/colores/{color}")
     public ResponseEntity<List<MuestraColorResponse>> listaMuestrasPorColor(@PathVariable String color) {
-        List<MuestraColorResponse> listaMuestrasPorColor = new ArrayList<>();
-        for (Muestra m : mService.obtenerPorColor(color)) {
-            MuestraColorResponse mCR = new MuestraColorResponse();
-            mCR.boyaId = m.getBoya().getBoyaId();
-            mCR.horario = m.getHorarioMuestra();
-            mCR.alturaNivelDelMar = m.getAlturaNivelMar();
-            listaMuestrasPorColor.add(mCR);
+        List<Muestra> listaMuestrasPorColor = mService.obtenerPorColor(color);
+        if (listaMuestrasPorColor.isEmpty()) {
+            return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(listaMuestrasPorColor);
+        List<MuestraColorResponse> listaMuestrasPorColorResponse = ResponseMethodsMapper
+                .crearListaMuestraColorResponse(listaMuestrasPorColor);
+        return ResponseEntity.ok(listaMuestrasPorColorResponse);
     }
 
     @GetMapping("/muestras/minima/{boyaId}")
     public ResponseEntity<MuestraAlturaMinResponse> alturaMarMinima(@PathVariable Integer boyaId) {
-        MuestraAlturaMinResponse mAMR = new MuestraAlturaMinResponse();
         Muestra m = mService.getAlturaMin(boyaId);
-        mAMR.color = m.getBoya().getColorLuz();
-        mAMR.alturaNivelMar = m.getAlturaNivelMar();
-        mAMR.horario = m.getHorarioMuestra();
+        if (m == null) {
+            return ResponseEntity.notFound().build();
+        }
+        MuestraAlturaMinResponse mAMR = ResponseMethodsMapper.crearAlturaMinResponse(m.getAlturaNivelMar(),
+                m.getHorarioMuestra(), m.getBoya().getColorLuz());
         return ResponseEntity.ok(mAMR);
     }
 
     @GetMapping("/muestras/anomalias/{boyaId}")
     public ResponseEntity<MuestraAnomaliaResponse> anomalias(@PathVariable Integer boyaId) {
-        MuestraAnomaliaResponse mAR = new MuestraAnomaliaResponse();
         Optional<Anomalia> anomalia = mService.getAnomalia(boyaId);
         if (anomalia.isPresent()) {
-            mAR.alturaNivelMarActual = anomalia.get().getAlturaMarActual();
-            mAR.horarioInicioAnomalia = anomalia.get().getHorarioInicio();
-            mAR.horarioFinAnomalia = anomalia.get().getHorarioFin();
-            mAR.tipoAlerta = anomalia.get().getTipoAlerta();
+            MuestraAnomaliaResponse mAR = ResponseMethodsMapper.crearMuestraAnomaliaResp(
+                    anomalia.get().getAlturaMarActual(), anomalia.get().getHorarioInicio(),
+                    anomalia.get().getHorarioFin(), anomalia.get().getTipoAlerta());
             return ResponseEntity.ok(mAR);
         }
         return ResponseEntity.notFound().build();
@@ -90,17 +76,10 @@ public class MuestraController {
 
     @DeleteMapping("/muestras/{id}")
     public ResponseEntity<GenericResponse> borrarColor(@PathVariable Integer id) {
-        Muestra muestra = mService.obtenerPorId(id);
-        if (muestra == null) {
-            return ResponseEntity.notFound().build();
+        if (mService.borrarMuestra(id)) {
+            return ResponseEntity.ok(ResponseMethodsMapper.crearGR(true,
+                    "La muestra con id " + id + " ha sido eliminada con éxito", id));
         }
-        muestra.getBoya().setColorLuz("AZUL");
-        mService.grabar(muestra);
-        GenericResponse gR = new GenericResponse();
-        gR.isOk = true;
-        gR.id = id;
-        gR.mensaje = "La muestra con id " + id + " ha sido eliminada con éxito";
-        return ResponseEntity.ok(gR);
+        return ResponseEntity.notFound().build();
     }
-
 }
