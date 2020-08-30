@@ -22,18 +22,18 @@ public class MuestraController {
 
     @PostMapping("/muestras")
     public ResponseEntity<MuestraResponse> registrarMuestra(@RequestBody MuestraRequest mR) {
-        Muestra muestra = mService.crearMuestra(mR.boyaId, mR.alturaNivelMar, mR.horario, mR.latitud, mR.longitud,
+        Optional<Muestra> muestraOp = mService.crearMuestra(mR.boyaId, mR.alturaNivelMar, mR.horario, mR.latitud, mR.longitud,
                 mR.matricula);
-        if (muestra == null) {
+        if (muestraOp.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity
-                .ok(ResponseMethodsMapper.crearMR(muestra.getMuestraId(), bService.getColor(mR.alturaNivelMar)));
+                .ok(ResponseMethodsMapper.crearMR(muestraOp.get().getMuestraId(), bService.getColor(mR.alturaNivelMar)));
     }
 
     @GetMapping("/muestras/boyas/{boyaId}")
     public ResponseEntity<List<Muestra>> listaMuestrasPorBoya(@PathVariable Integer boyaId) {
-        List<Muestra> listaMuestrasPorBoya = bService.obtenerPorId(boyaId).getMuestras();
+        List<Muestra> listaMuestrasPorBoya = bService.obtenerPorId(boyaId).get().getMuestras();
         if (listaMuestrasPorBoya.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -46,9 +46,8 @@ public class MuestraController {
         if (listaMuestrasPorColor.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        List<MuestraColorResponse> listaMuestrasPorColorResponse = ResponseMethodsMapper
-                .crearListaMuestraColorResponse(listaMuestrasPorColor);
-        return ResponseEntity.ok(listaMuestrasPorColorResponse);
+        return ResponseEntity.ok(ResponseMethodsMapper
+        .crearListaMuestraColorResponse(listaMuestrasPorColor));
     }
 
     @GetMapping("/muestras/minima/{boyaId}")
@@ -57,19 +56,17 @@ public class MuestraController {
         if (m == null) {
             return ResponseEntity.notFound().build();
         }
-        MuestraAlturaMinResponse mAMR = ResponseMethodsMapper.crearAlturaMinResponse(m.getAlturaNivelMar(),
-                m.getHorarioMuestra(), m.getBoya().getColorLuz());
-        return ResponseEntity.ok(mAMR);
+        return ResponseEntity.ok(ResponseMethodsMapper.crearAlturaMinResponse(m.getAlturaNivelMar(),
+        m.getHorarioMuestra(), m.getBoya().getColorLuz()));
     }
 
     @GetMapping("/muestras/anomalias/{boyaId}")
     public ResponseEntity<MuestraAnomaliaResponse> anomalias(@PathVariable Integer boyaId) {
-        Optional<Anomalia> anomalia = mService.getAnomalia(boyaId);
+        Optional<Anomalia> anomalia = mService.getAnomalia(boyaId);       
         if (anomalia.isPresent()) {
-            MuestraAnomaliaResponse mAR = ResponseMethodsMapper.crearMuestraAnomaliaResp(
-                    anomalia.get().getAlturaMarActual(), anomalia.get().getHorarioInicio(),
-                    anomalia.get().getHorarioFin(), anomalia.get().getTipoAlerta());
-            return ResponseEntity.ok(mAR);
+            return ResponseEntity.ok(ResponseMethodsMapper.crearMuestraAnomaliaResp(
+                anomalia.get().getAlturaMarActual(), anomalia.get().getHorarioInicio(),
+                anomalia.get().getHorarioFin(), anomalia.get().getTipoAlerta()));
         }
         return ResponseEntity.notFound().build();
     }

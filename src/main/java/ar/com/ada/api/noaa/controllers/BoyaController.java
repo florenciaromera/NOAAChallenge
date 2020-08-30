@@ -1,6 +1,7 @@
 package ar.com.ada.api.noaa.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,11 @@ public class BoyaController {
 
     @PostMapping("/boyas")
     public ResponseEntity<GenericResponse> crearBoya(@RequestBody BoyaRequest bR) {
-        Boya boya;
-        boya = bS.crearBoya(bR.latitudInstalacion, bR.longitudInstalacion);
-        if(boya == null){
+        Optional<Boya> boyaOp = bS.crearBoya(bR.latitudInstalacion, bR.longitudInstalacion);
+        if(boyaOp.isEmpty()){
             return ResponseEntity.badRequest().build();
         }
-        GenericResponse gR = ResponseMethodsMapper.crearGR(true, "Boya creada con exito", boya.getBoyaId());
-        return ResponseEntity.ok(gR);
+        return ResponseEntity.ok(ResponseMethodsMapper.crearGR(true, "Boya creada con exito", boyaOp.get().getBoyaId()));
     }
 
     @GetMapping("/boyas")
@@ -38,23 +37,21 @@ public class BoyaController {
 
     @GetMapping("/boyas/{id}")
     public ResponseEntity<Boya> obtenerInfoBoya(@PathVariable Integer id) {
-        Boya boya = bS.obtenerPorId(id);
-        if(boya == null){
+        Optional<Boya> boyaOp = bS.obtenerPorId(id);
+        if(boyaOp.isEmpty()){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(boya);
+        return ResponseEntity.ok(boyaOp.get());
     }
 
     @PutMapping("/boyas/{id}")
     public ResponseEntity<GenericResponse> actualizarColor(@PathVariable Integer id,
             @RequestBody BoyaActualizarColor bColor) {
-        Boya boya = bS.actualizarColor(id, bColor.color);
-        if (boya == null) {
+        Optional<Boya> boyaOp = bS.actualizarColor(id, bColor.color);
+        if (boyaOp.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-
-        GenericResponse gR = ResponseMethodsMapper.crearGR(true, "Color de boya actualizado con exito", boya.getBoyaId());
-        return ResponseEntity.ok(gR);
+        return ResponseEntity.ok(ResponseMethodsMapper.crearGR(true, "Color de boya actualizado con exito", boyaOp.get().getBoyaId()));
     }
 
 }

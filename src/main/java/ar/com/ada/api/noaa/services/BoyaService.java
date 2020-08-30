@@ -15,25 +15,25 @@ public class BoyaService {
     @Autowired
     BoyaRepo boyaRepo;
 
-    public Boya crearBoya(Double latitud, Double longitud) {
+    public Optional<Boya> crearBoya(Double latitud, Double longitud) {
         if (GeoUtils.chequearRangoPlanetario(latitud, longitud)) {
             Boya boya = new Boya();
             boya.setLatitudInstalacion(latitud);
-            boya.setLongitudInstalacion(longitud);
-            return boyaRepo.save(boya);
+            boya.setLongitudInstalacion(longitud); 
+            return Optional.of(boyaRepo.save(boya));
         }
-        return null;
+        return Optional.empty();
     }
 
     public List<Boya> obtenerBoyas() {
         return boyaRepo.findAll();
     }
 
-    public Boya obtenerPorId(Integer boyaId) {
-        Optional<Boya> b = boyaRepo.findById(boyaId);
-        if (b.isPresent())
-            return b.get();
-        return null;
+    public Optional<Boya> obtenerPorId(Integer boyaId) {
+        Optional<Boya> bOp = boyaRepo.findById(boyaId);
+        if (bOp.isPresent())
+            return bOp;
+        return Optional.empty();
 
     }
 
@@ -48,13 +48,13 @@ public class BoyaService {
         return color;
     }
 
-	public Boya actualizarColor(Integer id, String color) {
-        Boya boya = obtenerPorId(id);
-        if(boya == null){
-            return null;
+	public Optional<Boya> actualizarColor(Integer id, String color) {
+        Optional<Boya> boyaOp = obtenerPorId(id);
+        if(boyaOp.isEmpty()){
+            return Optional.empty();
         }
-        boya.setColorLuz(color);
-        return boyaRepo.save(boya);
+        boyaOp.get().setColorLuz(color);
+        return Optional.of(boyaRepo.save(boyaOp.get()));
 	}
 
 }

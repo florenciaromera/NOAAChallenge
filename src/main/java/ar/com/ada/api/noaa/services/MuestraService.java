@@ -19,31 +19,35 @@ public class MuestraService {
     @Autowired
     BoyaService bService;
 
-    public Muestra crearMuestra(Integer boyaId, Double alturaNivelMar, Date horario, Double latitud, Double longitud,
+    public Optional<Muestra> crearMuestra(Integer boyaId, Double alturaNivelMar, Date horario, Double latitud, Double longitud,
             String matricula) {
         Muestra muestra = new Muestra();
-        Boya b = bService.obtenerPorId(boyaId);
-        b.setColorLuz(bService.getColor(alturaNivelMar));
-        muestra.setBoya(b);
-        muestra.setAlturaNivelMar(alturaNivelMar);
-        muestra.setHorarioMuestra(horario);
-        muestra.setLatitud(latitud);
-        muestra.setLongitud(longitud);
-        muestra.setMatriculaEmbarcacion(matricula);
-        grabar(muestra);
-        return muestra;
+        Optional<Boya> bOp = bService.obtenerPorId(boyaId);
+        if(bOp.isPresent()){
+            bOp.get().setColorLuz(bService.getColor(alturaNivelMar));
+            muestra.setBoya(bOp.get());
+            muestra.setAlturaNivelMar(alturaNivelMar);
+            muestra.setHorarioMuestra(horario);
+            muestra.setLatitud(latitud);
+            muestra.setLongitud(longitud);
+            muestra.setMatriculaEmbarcacion(matricula);
+            grabar(muestra);
+            return Optional.of(muestra);
+        }
+        return Optional.empty();
+        
     }
 
     public List<Muestra> obtenerMuestras() {
         return repo.findAll();
     }
 
-    public Muestra obtenerPorId(Integer id) {
+    public Optional<Muestra> obtenerPorId(Integer id) {
         Optional<Muestra> opMuestra = repo.findById(id);
         if (opMuestra.isPresent()) {
-            return opMuestra.get();
+            return opMuestra;
         }
-        return null;
+        return Optional.empty();
     }
 
     public void grabar(Muestra muestra) {
@@ -66,20 +70,22 @@ public class MuestraService {
     }
 
     public boolean borrarMuestra(Integer id){
-        Muestra m = obtenerPorId(id);
-        if(m == null){
+        Optional<Muestra> mOp = obtenerPorId(id);
+        if(mOp.isEmpty()){
             return false;
         }
-        m.getBoya().setColorLuz("AZUL");
-        grabar(m);
+        mOp.get().getBoya().setColorLuz("AZUL");
+        grabar(mOp.get());
         return true;
     }
 
     public Optional<Anomalia> getAnomalia(Integer boyaId) {
-        Anomalia anomalia = new Anomalia();
+        Anomalia anomalia = null;
+
         List<Muestra> muestras = repo.findMuestrasAbsolutasByBoyaId(boyaId);
         Muestra mInicial = muestras.get(0);
         Muestra mfinal = repo.ultimaMuestra(boyaId).get(0);
+        
         Boolean setearMuestraInicial = false;
         Muestra mAnterior = null;
         for (Muestra m : muestras) {
@@ -111,8 +117,8 @@ public class MuestraService {
                 }
                 setearMuestraInicial = true;
             }
-        }
-        return Optional.of(anomalia);
+        }       
+        return anomalia != null ? Optional.of(anomalia) : Optional.empty();
     }
 
     private Anomalia createAnomalia(Double alturaNivelMar, Date horarioInicio, Date horarioFin, String tipoAlerta) {
