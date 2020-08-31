@@ -21,11 +21,16 @@ public class BoyaServiceTest {
     BoyaService bService;
 
     @Test
-    void crearBoyaValidacion_SUCCESS(){
+    void crearBoyaConLatitudCorrecta_SUCCESS(){
         Optional<Boya> boya = bService.crearBoya(100.8, 130.0);
         assertTrue(boya.get().getLatitudInstalacion().equals(100.8));
+    }
+
+    void crearBoyaConLongitudCorrecta_SUCCESS(){
+        Optional<Boya> boya = bService.crearBoya(100.8, 130.0);
         assertEquals(130.0, boya.get().getLongitudInstalacion());
     }
+
     @Test
     void crearBoyaValidacion_FAILED(){
         Optional<Boya> boyaOp = bService.crearBoya(92.0, 181.0);

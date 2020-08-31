@@ -12,7 +12,7 @@ import ar.com.ada.api.noaa.utils.GeoUtils;
 class GeoUtilsTests {
     
     @Test
-	void chequearFueraRangoPlanetario(){
+	void chequearRangoPlanetarioEsFalsoConLatitudLongitudExcedida(){
 		boolean fueraRango = GeoUtils.chequearRangoPlanetario(-91.0, -180.0);
 		assertFalse(fueraRango);
     }
