@@ -24,9 +24,10 @@ public class BoyaServiceTest {
         assertTrue(boya.get().getLatitudInstalacion().equals(89.0));
     }
 
+    @Test
     void crearBoyaConLongitudCorrecta_SUCCESS(){
         Optional<Boya> boya = bService.crearBoya(89.0, 180.0);
-        assertEquals(130.0, boya.get().getLongitudInstalacion());
+        assertEquals(180.0, boya.get().getLongitudInstalacion());
     }
 
     @Test
