@@ -118,7 +118,7 @@ public class MuestraService {
     }
 
     private boolean nivelMarMayor500 (Double alturaAnterior, Double alturaActual){
-        return (Math.abs(alturaAnterior) + Math.abs(alturaActual) >= 500) ? true : false;
+        return Math.abs(alturaAnterior) + Math.abs(alturaActual) >= 500;
     }
 
 }
