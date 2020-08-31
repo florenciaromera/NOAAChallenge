@@ -41,9 +41,9 @@ public class BoyaService {
 
     public String getColor(double alturaNivelMar) {
         String color = VERDE;
-        if (Math.abs(alturaNivelMar) <= Math.abs(100)) {
+        if (Math.abs(alturaNivelMar) >= Math.abs(100)) {
             color = ROJO;
-        } else if ((Math.abs(alturaNivelMar) <= Math.abs(50)) && (Math.abs(alturaNivelMar) > Math.abs(100))) {
+        } else if ((Math.abs(alturaNivelMar) >= Math.abs(50)) && (Math.abs(alturaNivelMar) < Math.abs(100))) {
             color = AMARILLO;
         }
         return color;
