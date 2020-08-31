@@ -23,6 +23,19 @@ public class Muestra {
     @JoinColumn(name = "boya_id", referencedColumnName = "boya_id")
     private Boya boya;
 
+    public Muestra(){
+
+    }
+
+    public Muestra(Boya boya, Double alturaNivelMar, Date horario, Double latitud, Double longitud, String matricula){
+        this.boya = boya;
+        this.alturaNivelMar = alturaNivelMar;
+        this.horarioMuestra = horario;
+        this.latitud = latitud;
+        this.longitud = longitud;
+        this.matriculaEmbarcacion = matricula;
+    }
+
     public Integer getMuestraId() {
         return muestraId;
     }

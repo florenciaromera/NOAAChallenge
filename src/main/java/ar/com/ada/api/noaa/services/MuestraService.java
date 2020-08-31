@@ -21,16 +21,10 @@ public class MuestraService {
 
     public Optional<Muestra> crearMuestra(Integer boyaId, Double alturaNivelMar, Date horario, Double latitud, Double longitud,
             String matricula) {
-        Muestra muestra = new Muestra();
         Optional<Boya> bOp = bService.obtenerPorId(boyaId);
         if(bOp.isPresent()){
             bOp.get().setColorLuz(bService.getColor(alturaNivelMar));
-            muestra.setBoya(bOp.get());
-            muestra.setAlturaNivelMar(alturaNivelMar);
-            muestra.setHorarioMuestra(horario);
-            muestra.setLatitud(latitud);
-            muestra.setLongitud(longitud);
-            muestra.setMatriculaEmbarcacion(matricula);
+            Muestra muestra = new Muestra(bOp.get(), alturaNivelMar, horario, latitud, longitud, matricula);
             grabar(muestra);
             return Optional.of(muestra);
         }
