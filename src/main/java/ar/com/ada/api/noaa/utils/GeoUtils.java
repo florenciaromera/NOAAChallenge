@@ -3,7 +3,7 @@ package ar.com.ada.api.noaa.utils;
 public class GeoUtils {
 
     public static boolean chequearRangoPlanetario(Double latitud, Double longitud) {
-        return (Math.abs(latitud) > 90 && Math.abs(longitud) > 180) ? false : true;
+        return Math.abs(latitud) <= 90 || Math.abs(longitud) <= 180;
     }
 
     public static String ubicarHemisferioSurNorte(Double latitud, Double longitud){
