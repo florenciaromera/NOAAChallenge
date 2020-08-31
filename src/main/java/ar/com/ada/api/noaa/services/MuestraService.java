@@ -13,6 +13,13 @@ import ar.com.ada.api.noaa.repos.MuestraRepo;
 
 @Service
 public class MuestraService {
+    private final static String ROJO = "ROJO";
+    private final static String AMARILLO = "AMARILLO";
+    private final static String AZUL = "AZUL";
+    private final static String ALERTA_IMPACTO = "ALERTA DE IMPACTO";
+    private final static String ALERTA_KAIJUN = "ALERTA DE KAIJUN";
+    private final static Integer IMPACTO = 500;
+
     @Autowired
     MuestraRepo repo;
 
@@ -50,9 +57,9 @@ public class MuestraService {
 
     public List<Muestra> obtenerPorColor(String color) {
         List<Muestra> muestras;
-        if (color.equalsIgnoreCase("ROJO")) {
+        if (color.equalsIgnoreCase(ROJO)) {
             muestras = repo.findAllRed();
-        } else if (color.equalsIgnoreCase("AMARILLO")) {
+        } else if (color.equalsIgnoreCase(AMARILLO)) {
             muestras = repo.findAllYellow();
         } else
             muestras = repo.findAllGreen();
@@ -68,7 +75,7 @@ public class MuestraService {
         if(mOp.isEmpty()){
             return false;
         }
-        mOp.get().getBoya().setColorLuz("AZUL");
+        mOp.get().getBoya().setColorLuz(AZUL);
         grabar(mOp.get());
         return true;
     }
@@ -89,7 +96,7 @@ public class MuestraService {
                 mAnterior = m;
             } else if (nivelMarMayor500(mAnterior.getAlturaNivelMar(), m.getAlturaNivelMar())) {
                 anomalia = new Anomalia(mfinal.getAlturaNivelMar(), mAnterior.getHorarioMuestra(),
-                        m.getHorarioMuestra(), "ALERTA DE IMPACTO");
+                        m.getHorarioMuestra(), ALERTA_IMPACTO);
                 break;
             } else {
                 mAnterior = m;
@@ -108,7 +115,7 @@ public class MuestraService {
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(difHoraria);
                 if (minutes >= 10) {
                     anomalia = new Anomalia(mfinal.getAlturaNivelMar(), mInicial.getHorarioMuestra(),
-                            m.getHorarioMuestra(), "KAIJUN");
+                            m.getHorarioMuestra(), ALERTA_KAIJUN);
                     break;
                 }
                 setearMuestraInicial = true;
@@ -118,7 +125,6 @@ public class MuestraService {
     }
 
     private boolean nivelMarMayor500 (Double alturaAnterior, Double alturaActual){
-        return Math.abs(alturaAnterior) + Math.abs(alturaActual) >= 500;
+        return Math.abs(alturaAnterior) + Math.abs(alturaActual) >= IMPACTO;
     }
-
 }
