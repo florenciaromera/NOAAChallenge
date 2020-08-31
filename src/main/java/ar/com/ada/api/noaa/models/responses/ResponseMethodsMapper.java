@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ar.com.ada.api.noaa.anomalias.Anomalia;
 import ar.com.ada.api.noaa.entities.Muestra;
 
 public class ResponseMethodsMapper {
@@ -42,12 +43,12 @@ public class ResponseMethodsMapper {
         return mAMR;
     }
 
-    public static MuestraAnomaliaResponse crearMuestraAnomaliaResp(Double altura, Date horarioInicio, Date horarioFin, String tipoAlerta){
+    public static MuestraAnomaliaResponse crearMuestraAnomaliaResp(Anomalia anomalia){
         MuestraAnomaliaResponse mAR = new MuestraAnomaliaResponse();
-        mAR.alturaNivelMarActual = altura;
-        mAR.horarioInicioAnomalia = horarioInicio;
-        mAR.horarioFinAnomalia = horarioFin;
-        mAR.tipoAlerta = tipoAlerta;
+        mAR.alturaNivelMarActual = anomalia.getAlturaMarActual();
+        mAR.horarioInicioAnomalia = anomalia.getHorarioInicio();
+        mAR.horarioFinAnomalia = anomalia.getHorarioFin();
+        mAR.tipoAlerta = anomalia.getTipoAlerta();
         return mAR;
     }
 }

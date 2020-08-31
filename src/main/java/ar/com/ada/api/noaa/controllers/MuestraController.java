@@ -64,9 +64,7 @@ public class MuestraController {
     public ResponseEntity<MuestraAnomaliaResponse> anomalias(@PathVariable Integer boyaId) {
         Optional<Anomalia> anomalia = mService.getAnomalia(boyaId);       
         if (anomalia.isPresent()) {
-            return ResponseEntity.ok(ResponseMethodsMapper.crearMuestraAnomaliaResp(
-                anomalia.get().getAlturaMarActual(), anomalia.get().getHorarioInicio(),
-                anomalia.get().getHorarioFin(), anomalia.get().getTipoAlerta()));
+            return ResponseEntity.ok(ResponseMethodsMapper.crearMuestraAnomaliaResp(anomalia.get()));
         }
         return ResponseEntity.notFound().build();
     }
