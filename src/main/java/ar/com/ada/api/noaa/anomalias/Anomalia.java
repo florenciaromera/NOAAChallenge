@@ -9,7 +9,6 @@ public class Anomalia {
     private String tipoAlerta;
 
     public Anomalia(){
-
     }
     
     public Anomalia(Double alturaMarActual, Date horarioInicio, Date horarioFin, String tipoAlerta){

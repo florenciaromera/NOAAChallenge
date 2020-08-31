@@ -28,7 +28,6 @@ public class Boya {
     private List<Muestra> muestras = new ArrayList<>();
 
     public Boya(){
-
     }
 
     public Boya(Double latitud, Double longitud){

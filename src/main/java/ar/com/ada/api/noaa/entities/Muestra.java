@@ -24,7 +24,6 @@ public class Muestra {
     private Boya boya;
 
     public Muestra(){
-
     }
 
     public Muestra(Boya boya, Double alturaNivelMar, Date horario, Double latitud, Double longitud, String matricula){
