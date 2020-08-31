@@ -8,6 +8,17 @@ public class Anomalia {
     private Date horarioFin;
     private String tipoAlerta;
 
+    public Anomalia(){
+
+    }
+    
+    public Anomalia(Double alturaMarActual, Date horarioInicio, Date horarioFin, String tipoAlerta){
+        this.alturaMarActual = alturaMarActual;
+        this.horarioInicio = horarioInicio;
+        this.horarioFin = horarioFin;
+        this.tipoAlerta = tipoAlerta;
+    }
+
     public Double getAlturaMarActual() {
         return alturaMarActual;
     }

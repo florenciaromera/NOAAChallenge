@@ -88,10 +88,12 @@ public class MuestraService {
         
         Boolean setearMuestraInicial = false;
         Muestra mAnterior = null;
+        Muestra ultimaMuestra = muestras.get(muestras.size()-1);
+        
         for (Muestra m : muestras) {
             if (mAnterior == null) {
                 mAnterior = m;
-            } else if ((Math.abs(mAnterior.getAlturaNivelMar()) + Math.abs(m.getAlturaNivelMar())) >= 500) {
+            } else if (nivelMarMayor500(mAnterior.getAlturaNivelMar(), m.getAlturaNivelMar())) {
                 anomalia = createAnomalia(mfinal.getAlturaNivelMar(), mAnterior.getHorarioMuestra(),
                         m.getHorarioMuestra(), "ALERTA DE IMPACTO");
                 break;
@@ -107,7 +109,7 @@ public class MuestraService {
                 continue;
             }
 
-            if (Math.abs(m.getAlturaNivelMar()) < 200) {
+            if ((Math.abs(m.getAlturaNivelMar()) < 200) || m.equals(ultimaMuestra)) {
                 long difHoraria = m.getHorarioMuestra().getTime() - mInicial.getHorarioMuestra().getTime();
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(difHoraria);
                 if (minutes >= 10) {
@@ -122,11 +124,11 @@ public class MuestraService {
     }
 
     private Anomalia createAnomalia(Double alturaNivelMar, Date horarioInicio, Date horarioFin, String tipoAlerta) {
-        Anomalia anomalia = new Anomalia();
-        anomalia.setAlturaMarActual(alturaNivelMar);
-        anomalia.setHorarioInicio(horarioInicio);
-        anomalia.setHorarioFin(horarioFin);
-        anomalia.setTipoAlerta(tipoAlerta);
-        return anomalia;
+        return new Anomalia(alturaNivelMar, horarioInicio, horarioFin, tipoAlerta);
     }
+
+    private boolean nivelMarMayor500 (Double alturaAnterior, Double alturaActual){
+        return (Math.abs(alturaAnterior) + Math.abs(alturaActual) >= 500) ? true : false;
+    }
+
 }
