@@ -8,47 +8,30 @@ import ar.com.ada.api.noaa.anomalias.Anomalia;
 import ar.com.ada.api.noaa.entities.Muestra;
 
 public class ResponseMethodsMapper {
-    public static GenericResponse crearGR(boolean isOk, String mensaje, Integer id){
-        GenericResponse gR = new GenericResponse();
-        gR.isOk = isOk;
-        gR.mensaje = mensaje;
-        gR.id = id;
-        return gR;
+    public static GenericResponse crearGR(boolean isOk, String mensaje, Integer id) {
+        return new GenericResponse(isOk, id, mensaje);
     }
 
-    public static MuestraResponse crearMR(Integer id, String color){
-        MuestraResponse mR = new MuestraResponse();
-        mR.id = id;
-        mR.color = color;
-        return mR;
+    public static MuestraResponse crearMR(Integer id, String color) {
+        return new MuestraResponse(id, color);
     }
 
-    public static List<MuestraColorResponse> crearListaMuestraColorResponse(List<Muestra> listaMuestrasPorColor){
+    public static List<MuestraColorResponse> crearListaMuestraColorResponse(List<Muestra> listaMuestrasPorColor) {
         List<MuestraColorResponse> listaMuestrasPorColorResponse = new ArrayList<>();
         for (Muestra m : listaMuestrasPorColor) {
-            MuestraColorResponse mCR = new MuestraColorResponse();
-            mCR.boyaId = m.getBoya().getBoyaId();
-            mCR.horario = m.getHorarioMuestra();
-            mCR.alturaNivelDelMar = m.getAlturaNivelMar();
-            listaMuestrasPorColorResponse.add(mCR);
+            listaMuestrasPorColorResponse.add(new MuestraColorResponse(m.getBoya().getBoyaId(), m.getHorarioMuestra(),
+            m.getAlturaNivelMar()));
         }
         return listaMuestrasPorColorResponse;
     }
 
-    public static MuestraAlturaMinResponse crearAlturaMinResponse(Double alturaNivelMar, Date horarioMuestra, String color){
-        MuestraAlturaMinResponse mAMR = new MuestraAlturaMinResponse();
-        mAMR.alturaNivelMar = alturaNivelMar;
-        mAMR.horario = horarioMuestra;
-        mAMR.color = color;
-        return mAMR;
+    public static MuestraAlturaMinResponse crearAlturaMinResponse(Double alturaNivelMar, Date horarioMuestra,
+            String color) {
+        return new MuestraAlturaMinResponse(alturaNivelMar, horarioMuestra, color);
     }
 
-    public static MuestraAnomaliaResponse crearMuestraAnomaliaResp(Anomalia anomalia){
-        MuestraAnomaliaResponse mAR = new MuestraAnomaliaResponse();
-        mAR.alturaNivelMarActual = anomalia.getAlturaMarActual();
-        mAR.horarioInicioAnomalia = anomalia.getHorarioInicio();
-        mAR.horarioFinAnomalia = anomalia.getHorarioFin();
-        mAR.tipoAlerta = anomalia.getTipoAlerta();
-        return mAR;
+    public static MuestraAnomaliaResponse crearMuestraAnomaliaResp(Anomalia anomalia) {
+        return new MuestraAnomaliaResponse(anomalia.getAlturaMarActual(), anomalia.getHorarioInicio(),
+                anomalia.getHorarioFin(), anomalia.getTipoAlerta());
     }
 }

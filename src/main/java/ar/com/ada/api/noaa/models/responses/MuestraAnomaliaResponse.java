@@ -7,4 +7,11 @@ public class MuestraAnomaliaResponse {
     public Date horarioInicioAnomalia;
     public Date horarioFinAnomalia;
     public String tipoAlerta;
+
+    public MuestraAnomaliaResponse(Double alturaNivelMarActual, Date horarioInicio, Date horarioFin, String tipoAlerta){
+        this.alturaNivelMarActual = alturaNivelMarActual;
+        this.horarioInicioAnomalia = horarioInicio;
+        this.horarioFinAnomalia = horarioFin;
+        this.tipoAlerta = tipoAlerta;
+    }
 }
