@@ -88,7 +88,7 @@ public class MuestraService {
             if (mAnterior == null) {
                 mAnterior = m;
             } else if (nivelMarMayor500(mAnterior.getAlturaNivelMar(), m.getAlturaNivelMar())) {
-                anomalia = createAnomalia(mfinal.getAlturaNivelMar(), mAnterior.getHorarioMuestra(),
+                anomalia = new Anomalia(mfinal.getAlturaNivelMar(), mAnterior.getHorarioMuestra(),
                         m.getHorarioMuestra(), "ALERTA DE IMPACTO");
                 break;
             } else {
@@ -107,7 +107,7 @@ public class MuestraService {
                 long difHoraria = m.getHorarioMuestra().getTime() - mInicial.getHorarioMuestra().getTime();
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(difHoraria);
                 if (minutes >= 10) {
-                    anomalia = createAnomalia(mfinal.getAlturaNivelMar(), mInicial.getHorarioMuestra(),
+                    anomalia = new Anomalia(mfinal.getAlturaNivelMar(), mInicial.getHorarioMuestra(),
                             m.getHorarioMuestra(), "KAIJUN");
                     break;
                 }
@@ -115,10 +115,6 @@ public class MuestraService {
             }
         }       
         return anomalia != null ? Optional.of(anomalia) : Optional.empty();
-    }
-
-    private Anomalia createAnomalia(Double alturaNivelMar, Date horarioInicio, Date horarioFin, String tipoAlerta) {
-        return new Anomalia(alturaNivelMar, horarioInicio, horarioFin, tipoAlerta);
     }
 
     private boolean nivelMarMayor500 (Double alturaAnterior, Double alturaActual){
