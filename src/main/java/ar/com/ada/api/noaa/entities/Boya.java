@@ -27,6 +27,15 @@ public class Boya {
     @JsonIgnore
     private List<Muestra> muestras = new ArrayList<>();
 
+    public Boya(){
+
+    }
+
+    public Boya(Double latitud, Double longitud){
+        this.latitudInstalacion = latitud;
+        this.longitudInstalacion = longitud;
+    }
+
     public Integer getBoyaId() {
         return boyaId;
     }

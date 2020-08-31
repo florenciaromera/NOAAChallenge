@@ -17,9 +17,7 @@ public class BoyaService {
 
     public Optional<Boya> crearBoya(Double latitud, Double longitud) {
         if (GeoUtils.chequearRangoPlanetario(latitud, longitud)) {
-            Boya boya = new Boya();
-            boya.setLatitudInstalacion(latitud);
-            boya.setLongitudInstalacion(longitud); 
+            Boya boya = new Boya(latitud, longitud);
             return Optional.of(boyaRepo.save(boya));
         }
         return Optional.empty();
@@ -55,6 +53,5 @@ public class BoyaService {
         }
         boyaOp.get().setColorLuz(color);
         return Optional.of(boyaRepo.save(boyaOp.get()));
-	}
-
+    }
 }
