@@ -12,6 +12,10 @@ import ar.com.ada.api.noaa.utils.GeoUtils;
 
 @Service
 public class BoyaService {
+    private final static String ROJO = "ROJO";
+    private final static String AMARILLO = "AMARILLO";
+    private final static String VERDE = "VERDE";
+
     @Autowired
     BoyaRepo boyaRepo;
 
@@ -36,12 +40,11 @@ public class BoyaService {
     }
 
     public String getColor(double alturaNivelMar) {
-        String color = "VERDE";
-        if (Math.abs(alturaNivelMar) <= -100 || Math.abs(alturaNivelMar) >= 100) {
-            color = "ROJO";
-        } else if ((Math.abs(alturaNivelMar) <= -50 && Math.abs(alturaNivelMar) > -100)
-                || (Math.abs(alturaNivelMar) >= 50 && Math.abs(alturaNivelMar) < 100)) {
-            color = "AMARILLO";
+        String color = VERDE;
+        if (Math.abs(alturaNivelMar) <= Math.abs(100)) {
+            color = ROJO;
+        } else if ((Math.abs(alturaNivelMar) <= Math.abs(50)) && (Math.abs(alturaNivelMar) > Math.abs(100))) {
+            color = AMARILLO;
         }
         return color;
     }
