@@ -1,9 +1,7 @@
 package ar.com.ada.api.noaa.servicesTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
@@ -22,22 +20,26 @@ public class BoyaServiceTest {
 
     @Test
     void crearBoyaConLatitudCorrecta_SUCCESS(){
-        Optional<Boya> boya = bService.crearBoya(100.8, 130.0);
-        assertTrue(boya.get().getLatitudInstalacion().equals(100.8));
+        Optional<Boya> boya = bService.crearBoya(89.0, 130.0);
+        assertTrue(boya.get().getLatitudInstalacion().equals(89.0));
     }
 
     void crearBoyaConLongitudCorrecta_SUCCESS(){
-        Optional<Boya> boya = bService.crearBoya(100.8, 130.0);
+        Optional<Boya> boya = bService.crearBoya(89.0, 180.0);
         assertEquals(130.0, boya.get().getLongitudInstalacion());
     }
 
     @Test
-    void crearBoyaValidacion_FAILED(){
-        Optional<Boya> boyaOp = bService.crearBoya(92.0, 181.0);
-        assertEquals(null, boyaOp);
+    void crearBoyaLatitudIncorrecta_FAILED(){
+        Optional<Boya> boyaOp = bService.crearBoya(100.0, 170.0);
+        assertEquals(Optional.empty(), boyaOp);
     }
 
-    
+    @Test
+    void crearBoyaLongitudIncorrecta_FAILED(){
+        Optional<Boya> boyaOp = bService.crearBoya(50.0, 190.0);
+        assertEquals(Optional.empty(), boyaOp);
+    }
 
     @Test
     void muestraObtenerRoja_SUCCESS() {
