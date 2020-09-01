@@ -30,73 +30,44 @@ public class MuestraServiceTest {
     
     @Test
     void getAnomaliaALERTAIMPACTO_SUCCESS(){
-        List<Muestra> muestrasIMPACTO = new ArrayList<>();
-        Muestra mAnterior = new Muestra();
-        mAnterior.setAlturaNivelMar(500.0);
-        mAnterior.setHorarioMuestra(new Date());
-        Muestra mActual = new Muestra();
-        mActual.setAlturaNivelMar(-300.0);
-        mActual.setHorarioMuestra(new Date());
-        muestrasIMPACTO.add(mAnterior);
-        muestrasIMPACTO.add(mActual);
-
-        List<Muestra> ultimaIMPACTO = new ArrayList<>();
-        ultimaIMPACTO.add(mActual);
+        Muestra mAnterior = new Muestra(500.0, new Date());
+        Muestra mActual = new Muestra(-300.0, new Date());
+        List<Muestra> muestrasIMPACTO = new ArrayList<>(List.of(mAnterior, mActual));
+        List<Muestra> ultimaIMPACTO = new ArrayList<>(List.of(mActual));
 
         when(repo.findMuestrasAbsolutasByBoyaId(1)).thenReturn(muestrasIMPACTO);
         when(repo.ultimaMuestra(1)).thenReturn(ultimaIMPACTO);
 
         Optional<Anomalia> anomalia = mService.getAnomalia(1);
-        
         assertEquals("ALERTA DE IMPACTO", anomalia.get().getTipoAlerta());
     }
 
     @Test
     void getAnomaliaKAIJUN_SUCCESS(){
-        List<Muestra> muestrasNULL_ANOMALIA = new ArrayList<>();
-        Muestra m1 = new Muestra();
-        m1.setAlturaNivelMar(230.0);
-        m1.setHorarioMuestra(new Date());
-        Muestra m2 = new Muestra();
-        m2.setAlturaNivelMar(90.0);
+        Muestra m1 = new Muestra(230.0, new Date());
         LocalDateTime dtActualizada = LocalDateTime.of(2021,2,20,21,46,31);
-        Date dt = Date.from(dtActualizada.atZone(ZoneId.systemDefault()).toInstant());
-        m2.setHorarioMuestra(dt);
-        
-        muestrasNULL_ANOMALIA.add(m1);
-        muestrasNULL_ANOMALIA.add(m2);
-        
-        List<Muestra> ultimaNULL_ANOMALIA = new ArrayList<>();
-        ultimaNULL_ANOMALIA.add(m2);
+        Muestra m2 = new Muestra(90.0, Date.from(dtActualizada.atZone(ZoneId.systemDefault()).toInstant()));
+        List<Muestra> muestrasNULL_ANOMALIA = new ArrayList<>(List.of(m1,m2));        
+        List<Muestra> ultimaNULL_ANOMALIA = new ArrayList<>(List.of(m2));
 
         when(repo.findMuestrasAbsolutasByBoyaId(1)).thenReturn(muestrasNULL_ANOMALIA);
         when(repo.ultimaMuestra(1)).thenReturn(ultimaNULL_ANOMALIA);
         
         Optional<Anomalia> anomalia = mService.getAnomalia(1);
-        
         assertEquals("ALERTA DE KAIJUN", anomalia.get().getTipoAlerta());
     }
 
     @Test
     void getAnomaliaKAIJUN_FAILED(){
-        List<Muestra> muestrasNULL_ANOMALIA = new ArrayList<>();
-        Muestra m1 = new Muestra();
-        m1.setAlturaNivelMar(30.0);
-        m1.setHorarioMuestra(new Date());
-        Muestra m2 = new Muestra();
-        m2.setAlturaNivelMar(90.0);
-        m2.setHorarioMuestra(new Date());
-        muestrasNULL_ANOMALIA.add(m1);
-        muestrasNULL_ANOMALIA.add(m2);
-        
-        List<Muestra> ultimaNULL_ANOMALIA = new ArrayList<>();
-        ultimaNULL_ANOMALIA.add(m2);
+        Muestra m1 = new Muestra(30.0, new Date());
+        Muestra m2 = new Muestra(90.0, new Date());
+        List<Muestra> muestrasNULL_ANOMALIA = new ArrayList<>(List.of(m1,m2));
+        List<Muestra> ultimaNULL_ANOMALIA = new ArrayList<>(List.of(m2));
 
         when(repo.findMuestrasAbsolutasByBoyaId(1)).thenReturn(muestrasNULL_ANOMALIA);
         when(repo.ultimaMuestra(1)).thenReturn(ultimaNULL_ANOMALIA);
         
-        Optional<Anomalia> anomalia = mService.getAnomalia(1);
-        
+        Optional<Anomalia> anomalia = mService.getAnomalia(1);        
         assertEquals(false, anomalia.isPresent());
     }
 }
