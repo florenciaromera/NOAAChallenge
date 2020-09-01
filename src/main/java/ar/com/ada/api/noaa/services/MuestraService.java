@@ -89,7 +89,7 @@ public class MuestraService {
         
         Boolean setearMuestraInicial = false;
         Muestra mAnterior = null;
-        Muestra ultimaMuestra = muestras.get(muestras.size()-1);
+        // Muestra ultimaMuestra = muestras.get(muestras.size()-1);
         
         for (Muestra m : muestras) {
             if (mAnterior == null) {
@@ -110,7 +110,7 @@ public class MuestraService {
                 continue;
             }
 
-            if ((Math.abs(m.getAlturaNivelMar()) < 200) || m.equals(ultimaMuestra)) {
+            if ((Math.abs(m.getAlturaNivelMar()) < 200) || m.equals(mfinal)) {
                 long difHoraria = m.getHorarioMuestra().getTime() - mInicial.getHorarioMuestra().getTime();
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(difHoraria);
                 if (minutes >= 10) {
