@@ -25,12 +25,7 @@ public class Muestra {
 
     public Muestra(){
     }
-    // constructor para test
-    public Muestra(Double alturaNivelMar, Date horario){
-        this.alturaNivelMar = alturaNivelMar;
-        this.horarioMuestra = horario;
-    }
-
+    
     public Muestra(Boya boya, Double alturaNivelMar, Date horario, Double latitud, Double longitud, String matricula){
         this.boya = boya;
         this.alturaNivelMar = alturaNivelMar;

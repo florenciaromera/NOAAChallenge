@@ -5,10 +5,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,58 +13,63 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import ar.com.ada.api.noaa.anomalias.Anomalia;
+import ar.com.ada.api.noaa.entities.Boya;
 import ar.com.ada.api.noaa.entities.Muestra;
 import ar.com.ada.api.noaa.repos.MuestraRepo;
 import ar.com.ada.api.noaa.services.MuestraService;
 
 @SpringBootTest
 public class MuestraServiceTest {
+    private final Boya BOYA = new Boya();
+
+    private final LocalDateTime dt = LocalDateTime.of(2021, 2, 20, 21, 46, 31);
+
     @InjectMocks
     MuestraService mService;
 
     @Mock
     MuestraRepo repo;
-    
-    @Test
-    void getAnomaliaALERTAIMPACTO_SUCCESS(){
-        Muestra mAnterior = new Muestra(500.0, new Date());
-        Muestra mActual = new Muestra(-300.0, new Date());
-        List<Muestra> muestrasIMPACTO = new ArrayList<>(List.of(mAnterior, mActual));
-        List<Muestra> ultimaIMPACTO = new ArrayList<>(List.of(mActual));
 
-        when(repo.findMuestrasAbsolutasByBoyaId(1)).thenReturn(muestrasIMPACTO);
-        when(repo.ultimaMuestra(1)).thenReturn(ultimaIMPACTO);
+    @Test
+    void getAnomaliaALERTAIMPACTO_SUCCESS() {
+        Muestra m1 = new Muestra(BOYA, 500.0, new Date(), 67.0, 120.0, "A34REW5");
+        Muestra m2 = new Muestra(BOYA, -300.0, new Date(), 23.0, 78.0, "J763F8");
+        List<Muestra> muestras = new ArrayList<>(List.of(m1, m2));
+        List<Muestra> ultima = new ArrayList<>(List.of(m2));
+
+        when(repo.findMuestrasAbsolutasByBoyaId(1)).thenReturn(muestras);
+        when(repo.ultimaMuestra(1)).thenReturn(ultima);
 
         Optional<Anomalia> anomalia = mService.getAnomalia(1);
         assertEquals("ALERTA DE IMPACTO", anomalia.get().getTipoAlerta());
     }
 
     @Test
-    void getAnomaliaKAIJUN_SUCCESS(){
-        Muestra m1 = new Muestra(230.0, new Date());
-        LocalDateTime dtActualizada = LocalDateTime.of(2021,2,20,21,46,31);
-        Muestra m2 = new Muestra(90.0, Date.from(dtActualizada.atZone(ZoneId.systemDefault()).toInstant()));
-        List<Muestra> muestrasNULL_ANOMALIA = new ArrayList<>(List.of(m1,m2));        
+    void getAnomaliaKAIJUN_SUCCESS() {
+        Muestra m1 = new Muestra(BOYA, 230.0, new Date(), 67.0, 120.0, "A34REW5");
+        Muestra m2 = new Muestra(BOYA, 90.0, Date.from(dt.atZone(ZoneId.systemDefault()).toInstant()), 67.0, 120.0,
+                "A34REW5");
+        List<Muestra> muestrasNULL_ANOMALIA = new ArrayList<>(List.of(m1, m2));
         List<Muestra> ultimaNULL_ANOMALIA = new ArrayList<>(List.of(m2));
 
         when(repo.findMuestrasAbsolutasByBoyaId(1)).thenReturn(muestrasNULL_ANOMALIA);
         when(repo.ultimaMuestra(1)).thenReturn(ultimaNULL_ANOMALIA);
-        
+
         Optional<Anomalia> anomalia = mService.getAnomalia(1);
         assertEquals("ALERTA DE KAIJUN", anomalia.get().getTipoAlerta());
     }
 
     @Test
-    void getAnomaliaKAIJUN_FAILED(){
-        Muestra m1 = new Muestra(30.0, new Date());
-        Muestra m2 = new Muestra(90.0, new Date());
-        List<Muestra> muestrasNULL_ANOMALIA = new ArrayList<>(List.of(m1,m2));
+    void getAnomaliaKAIJUN_FAILED() {
+        Muestra m1 = new Muestra(BOYA, 30.0, new Date(), 67.0, 120.0, "A34REW5");
+        Muestra m2 = new Muestra(BOYA, 90.0, new Date(), 67.0, 120.0, "A34REW5");
+        List<Muestra> muestrasNULL_ANOMALIA = new ArrayList<>(List.of(m1, m2));
         List<Muestra> ultimaNULL_ANOMALIA = new ArrayList<>(List.of(m2));
 
         when(repo.findMuestrasAbsolutasByBoyaId(1)).thenReturn(muestrasNULL_ANOMALIA);
         when(repo.ultimaMuestra(1)).thenReturn(ultimaNULL_ANOMALIA);
-        
-        Optional<Anomalia> anomalia = mService.getAnomalia(1);        
+
+        Optional<Anomalia> anomalia = mService.getAnomalia(1);
         assertEquals(false, anomalia.isPresent());
     }
 }
