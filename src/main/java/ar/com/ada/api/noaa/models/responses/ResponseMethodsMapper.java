@@ -33,5 +33,5 @@ public class ResponseMethodsMapper {
     public static MuestraAnomaliaResponse crearMuestraAnomaliaResp(Anomalia anomalia) {
         return new MuestraAnomaliaResponse(anomalia.getAlturaMarActual(), anomalia.getHorarioInicio(),
                 anomalia.getHorarioFin(), anomalia.getTipoAlerta());
-    }
+    }	
 }
