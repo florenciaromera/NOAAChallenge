@@ -60,4 +60,15 @@ public class BoyaServiceTest {
         assertNotEquals("AMARILLO", colorResultante);
     }
 
+    @Test
+    void muestraObtenerVerde_SUCCESS(){
+        String colorResultante = bService.getColor(20);
+        assertEquals("VERDE", colorResultante);
+    }
+
+    @Test
+    void muestraObtenerVerde_FAILED(){
+        String colorResultante = bService.getColor(-60);
+        assertNotEquals("VERDE", colorResultante);
+    }
 }
