@@ -34,8 +34,8 @@ public class MuestraServiceTest {
     void getAnomaliaALERTAIMPACTO_SUCCESS() {
         Muestra m1 = new Muestra(BOYA, 500.0, new Date(), 67.0, 120.0, "A34REW5");
         Muestra m2 = new Muestra(BOYA, -300.0, new Date(), 23.0, 78.0, "J763F8");
-        List<Muestra> muestras = new ArrayList<>(List.of(m1, m2));
-        List<Muestra> ultima = new ArrayList<>(List.of(m2));
+        ArrayList<Muestra> muestras = new ArrayList<>(List.of(m1, m2));
+        ArrayList<Muestra> ultima = new ArrayList<>(List.of(m2));
 
         when(repo.findMuestrasAbsolutasByBoyaId(1)).thenReturn(muestras);
         when(repo.ultimaMuestra(1)).thenReturn(ultima);
@@ -47,10 +47,10 @@ public class MuestraServiceTest {
     @Test
     void getAnomaliaKAIJUN_SUCCESS() {
         Muestra m1 = new Muestra(BOYA, 230.0, new Date(), 67.0, 120.0, "A34REW5");
-        Muestra m2 = new Muestra(BOYA, 90.0, Date.from(dt.atZone(ZoneId.systemDefault()).toInstant()), 67.0, 120.0,
+        Muestra m2 = new Muestra(BOYA, -290.0, Date.from(dt.atZone(ZoneId.systemDefault()).toInstant()), 67.0, 120.0,
                 "A34REW5");
-        List<Muestra> muestrasNULL_ANOMALIA = new ArrayList<>(List.of(m1, m2));
-        List<Muestra> ultimaNULL_ANOMALIA = new ArrayList<>(List.of(m2));
+        ArrayList<Muestra> muestrasNULL_ANOMALIA = new ArrayList<>(List.of(m1, m2));
+        ArrayList<Muestra> ultimaNULL_ANOMALIA = new ArrayList<>(List.of(m2));
 
         when(repo.findMuestrasAbsolutasByBoyaId(1)).thenReturn(muestrasNULL_ANOMALIA);
         when(repo.ultimaMuestra(1)).thenReturn(ultimaNULL_ANOMALIA);
@@ -63,8 +63,8 @@ public class MuestraServiceTest {
     void getAnomaliaKAIJUN_FAILED() {
         Muestra m1 = new Muestra(BOYA, 30.0, new Date(), 67.0, 120.0, "A34REW5");
         Muestra m2 = new Muestra(BOYA, 90.0, new Date(), 67.0, 120.0, "A34REW5");
-        List<Muestra> muestrasNULL_ANOMALIA = new ArrayList<>(List.of(m1, m2));
-        List<Muestra> ultimaNULL_ANOMALIA = new ArrayList<>(List.of(m2));
+        ArrayList<Muestra> muestrasNULL_ANOMALIA = new ArrayList<>(List.of(m1, m2));
+        ArrayList<Muestra> ultimaNULL_ANOMALIA = new ArrayList<>(List.of(m2));
 
         when(repo.findMuestrasAbsolutasByBoyaId(1)).thenReturn(muestrasNULL_ANOMALIA);
         when(repo.ultimaMuestra(1)).thenReturn(ultimaNULL_ANOMALIA);

@@ -26,17 +26,17 @@ public class MuestraService {
     @Autowired
     BoyaService bService;
 
-    public Optional<Muestra> crearMuestra(Integer boyaId, Double alturaNivelMar, Date horario, Double latitud, Double longitud,
-            String matricula) {
+    public Optional<Muestra> crearMuestra(Integer boyaId, Double alturaNivelMar, Date horario, Double latitud,
+            Double longitud, String matricula) {
         Optional<Boya> bOp = bService.obtenerPorId(boyaId);
-        if(bOp.isPresent()){
+        if (bOp.isPresent()) {
             bOp.get().setColorLuz(bService.getColor(alturaNivelMar));
             Muestra muestra = new Muestra(bOp.get(), alturaNivelMar, horario, latitud, longitud, matricula);
             grabar(muestra);
             return Optional.of(muestra);
         }
         return Optional.empty();
-        
+
     }
 
     public List<Muestra> obtenerMuestras() {
@@ -70,9 +70,9 @@ public class MuestraService {
         return repo.findByAlturaMin(boyaId);
     }
 
-    public boolean borrarMuestra(Integer id){
+    public boolean borrarMuestra(Integer id) {
         Optional<Muestra> mOp = obtenerPorId(id);
-        if(mOp.isEmpty()){
+        if (mOp.isEmpty()) {
             return false;
         }
         mOp.get().getBoya().setColorLuz(AZUL);
@@ -81,50 +81,48 @@ public class MuestraService {
     }
 
     public Optional<Anomalia> getAnomalia(Integer boyaId) {
+        ArrayList<Muestra> muestras = repo.findMuestrasAbsolutasByBoyaId(boyaId);
+        if (muestras.size() < 2) {
+            return Optional.empty();
+        }
+
         Anomalia anomalia = null;
 
-        List<Muestra> muestras = repo.findMuestrasAbsolutasByBoyaId(boyaId);
-        Muestra mInicial = muestras.get(0);
         Muestra mfinal = repo.ultimaMuestra(boyaId).get(0);
-        
-        Boolean setearMuestraInicial = false;
-        Muestra mAnterior = null;
-        // Muestra ultimaMuestra = muestras.get(muestras.size()-1);
-        
-        for (Muestra m : muestras) {
-            if (mAnterior == null) {
-                mAnterior = m;
-            } else if (nivelMarMayor500(mAnterior.getAlturaNivelMar(), m.getAlturaNivelMar())) {
-                anomalia = new Anomalia(mfinal.getAlturaNivelMar(), mAnterior.getHorarioMuestra(),
-                        m.getHorarioMuestra(), ALERTA_IMPACTO);
+
+        for (int i = 0; i < muestras.size() - 1; i++) {
+            if (nivelMarMayor500(muestras.get(i), muestras.get(i + 1))) {
+                anomalia = new Anomalia(mfinal.getAlturaNivelMar(), muestras.get(i + 1).getHorarioMuestra(),
+                        muestras.get(i).getHorarioMuestra(), ALERTA_IMPACTO);
                 break;
+            }
+        }
+
+        Muestra primeraMuestraMayor200 = null;
+        for (Muestra m : muestras) {
+            if (Math.abs(m.getAlturaNivelMar()) >= 200) {
+                if (primeraMuestraMayor200 == null) {
+                    primeraMuestraMayor200 = m;
+                } else {
+                    // pasar a función y que devuelva un boolean para el if
+                    final long difHoraria = m.getHorarioMuestra().getTime()
+                            - primeraMuestraMayor200.getHorarioMuestra().getTime();
+                    final long minutes = TimeUnit.MILLISECONDS.toMinutes(difHoraria);
+                    if (minutes >= 10) {
+                        anomalia = new Anomalia(mfinal.getAlturaNivelMar(), primeraMuestraMayor200.getHorarioMuestra(),
+                                m.getHorarioMuestra(), ALERTA_KAIJUN);
+                        break;
+                    }
+                }
             } else {
-                mAnterior = m;
+                primeraMuestraMayor200 = null;
             }
+        }
 
-            if (setearMuestraInicial) {
-                if (Math.abs(m.getAlturaNivelMar()) >= 200) {
-                    mInicial = m;
-                    setearMuestraInicial = false;
-                }
-                continue;
-            }
-
-            if ((Math.abs(m.getAlturaNivelMar()) < 200) || m.equals(mfinal)) {
-                long difHoraria = m.getHorarioMuestra().getTime() - mInicial.getHorarioMuestra().getTime();
-                long minutes = TimeUnit.MILLISECONDS.toMinutes(difHoraria);
-                if (minutes >= 10) {
-                    anomalia = new Anomalia(mfinal.getAlturaNivelMar(), mInicial.getHorarioMuestra(),
-                            m.getHorarioMuestra(), ALERTA_KAIJUN);
-                    break;
-                }
-                setearMuestraInicial = true;
-            }
-        }       
         return anomalia != null ? Optional.of(anomalia) : Optional.empty();
     }
 
-    private boolean nivelMarMayor500 (Double alturaAnterior, Double alturaActual){
-        return Math.abs(alturaAnterior) + Math.abs(alturaActual) >= IMPACTO;
+    private boolean nivelMarMayor500(Muestra muestraAnterior, Muestra muestraActual) {
+        return Math.abs(muestraAnterior.getAlturaNivelMar()) + Math.abs(muestraActual.getAlturaNivelMar()) >= IMPACTO;
     }
 }

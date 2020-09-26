@@ -1,5 +1,7 @@
 package ar.com.ada.api.noaa.repos;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +29,7 @@ public interface MuestraRepo extends JpaRepository<Muestra, Integer> {
 
     @Query("select m from Muestra m where m.boya.boyaId=:boyaId and m.horarioMuestra between (select min(m.horarioMuestra) from m where m.alturaNivelMar >= 200 "
             + "or m.alturaNivelMar <= -200) and (select max(m.horarioMuestra) from m where m.alturaNivelMar >= 200 or m.alturaNivelMar <= -200)")
-    List<Muestra> findMuestrasAbsolutasByBoyaId(Integer boyaId);
+    ArrayList<Muestra> findMuestrasAbsolutasByBoyaId(Integer boyaId);
 
     @Query("select m from Muestra m where m.boya.boyaId=:boyaId order by m.muestraId desc")
     List<Muestra> ultimaMuestra(Integer boyaId);
